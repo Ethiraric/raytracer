@@ -11,4 +11,15 @@
 #ifndef RAYTRACER_H_
 # define RAYTRACER_H_
 
+# ifdef __cplusplus
+extern "C"
+{
+#endif
+
+unsigned int		rt_getpixel(unsigned int x, unsigned int y);
+
+# ifdef __cplusplus
+}
+#endif
+
 #endif /* !RAYTRACER_H_ */
