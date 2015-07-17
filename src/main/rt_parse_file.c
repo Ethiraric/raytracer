@@ -58,6 +58,48 @@ static int	parse_object(t_object *object,
 }
 
 /*
+** Parses informations about the eye (i.e. the camera)
+*/
+static int	parse_eye(t_raytracer *rt, unsigned int lineno)
+{
+  char		*token;
+
+  CHECK_TOKEN(token, "%u: missing eye pos-x\n", lineno);
+  rt->eye.pos.x = atof(token);
+  CHECK_TOKEN(token, "%u: missing eye pos-y\n", lineno);
+  rt->eye.pos.y = atof(token);
+  CHECK_TOKEN(token, "%u: missing eye pos-z\n", lineno);
+  rt->eye.pos.z = atof(token);
+  CHECK_TOKEN(token, "%u: missing eye alpha angle\n", lineno);
+  rt->eye.rotat.alpha = atof(token);
+  CHECK_TOKEN(token, "%u: missing eye beta angle\n", lineno);
+  rt->eye.rotat.beta = atof(token);
+  CHECK_TOKEN(token, "%u: missing eye gamma angle\n", lineno);
+  rt->eye.rotat.gamma = atof(token);
+  CHECK_TOKEN(token, "%u: missing eye plan distance\n", lineno);
+  rt->eye.d = atof(token);
+  CHECK_TOKEN(token, "%u: missing eye plan width\n", lineno);
+  rt->eye.pw = atof(token);
+  CHECK_TOKEN(token, "%u: missing eye plan height\n", lineno);
+  rt->eye.ph = atof(token);
+  return (0);
+}
+
+/*
+** Parses informations about the render
+*/
+static int	parse_render(t_raytracer *rt, unsigned int lineno)
+{
+  char		*token;
+
+  CHECK_TOKEN(token, "%u: missing render image width\n", lineno);
+  rt->render.imgw = (unsigned int)(atoi(token));
+  CHECK_TOKEN(token, "%u: missing render image height\n", lineno);
+  rt->render.imgh = (unsigned int)(atoi(token));
+  return (0);
+}
+
+/*
 ** Returns a zero-initialized object from its name
 */
 static t_object	*get_object(const char *name, unsigned int lineno)
@@ -104,6 +146,10 @@ static int	parse_line(t_raytracer *rt, char *line, unsigned int lineno)
   token = strtok(line, " \n\t");
   if (!token || token[0] == '#')
     return (0);
+  if (!strcasecmp(token, "eye"))
+    return (parse_eye(rt, lineno));
+  if (!strcasecmp(token, "render"))
+    return (parse_render(rt, lineno));
   obj = get_object(token, lineno);
   if (!obj)
     return (1);
@@ -149,6 +195,7 @@ int		rt_parse_file(t_raytracer *rt, const char *filename)
 	}
       ++lineno;
     }
+  free(line);
   fclose(file);
   return (0);
 }

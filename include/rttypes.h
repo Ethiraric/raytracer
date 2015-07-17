@@ -14,6 +14,7 @@
 typedef float t_coor;
 typedef float t_angle;
 typedef t_coor t_radius;
+typedef t_coor t_dist;
 
 typedef struct	s_pos
 {
