@@ -14,12 +14,15 @@
 # ifdef __cplusplus
 extern "C"
 {
-#endif
+# endif
 
-unsigned int		rt_getpixel(unsigned int x, unsigned int y);
+typedef struct	s_raytracer t_raytracer;
+
+unsigned int	rt_getpixel(unsigned int x, unsigned int y);
+int		rt_parse_file(t_raytracer *rt, const char *filename);
 
 # ifdef __cplusplus
 }
-#endif
+# endif
 
 #endif /* !RAYTRACER_H_ */

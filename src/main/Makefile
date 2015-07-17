@@ -16,11 +16,13 @@ MAKE		+=	--no-print-directory
 
 SRCXX		=	main.cpp
 SRC		=	rt_getpixel.c
+SRC		+=	objlist.c
+SRC		+=	rt_parse_file.c
 
 OBJ		=	$(SRC:.c=.o) $(SRCXX:.cpp=.o)
 
-CFLAGS		=	-W -Wall -Wshadow -D_GNU_SOURCE -I../../include -fno-diagnostics-show-caret
-CXXFLAGS	=	-W -Wall -Wshadow -D_GNU_SOURCE -I../../include -fno-diagnostics-show-caret
+CFLAGS		=	-W -Wall -Wshadow -D_GNU_SOURCE -I../../include -fno-diagnostics-show-caret -fms-extensions
+CXXFLAGS	=	-W -Wall -Wshadow -D_GNU_SOURCE -I../../include -fno-diagnostics-show-caret -fms-extensions
 LDFLAGS		=	-lsfml-window -lsfml-graphics -lsfml-system
 
 %.o:	%.c

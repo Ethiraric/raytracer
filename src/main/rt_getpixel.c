@@ -11,7 +11,7 @@
 #include <stdlib.h>
 #include "raytracer.h"
 
-unsigned int		rt_getpixel(unsigned int x, unsigned int y)
+unsigned int	rt_getpixel(unsigned int x, unsigned int y)
 {
   (void)(x);
   (void)(y);
