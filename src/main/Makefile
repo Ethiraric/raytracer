@@ -18,6 +18,7 @@ SRCXX		=	main.cpp
 SRC		=	rt_getpixel.c
 SRC		+=	objlist.c
 SRC		+=	rt_parse_file.c
+SRC		+=	rt.c
 
 OBJ		=	$(SRC:.c=.o) $(SRCXX:.cpp=.o)
 

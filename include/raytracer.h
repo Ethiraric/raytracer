@@ -18,7 +18,9 @@ extern "C"
 
 typedef struct	s_raytracer t_raytracer;
 
-unsigned int	rt_getpixel(unsigned int x, unsigned int y);
+t_raytracer	*rt_new();
+void		rt_delete(t_raytracer *rt);
+unsigned int	rt_getpixel(t_raytracer *rt, unsigned int x, unsigned int y);
 int		rt_parse_file(t_raytracer *rt, const char *filename);
 
 # ifdef __cplusplus

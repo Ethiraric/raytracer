@@ -9,31 +9,52 @@
 */
 
 #include <SFML/Graphics.hpp>
+#include <stdio.h>
 #include "raytracer.h"
 
-static void	fill_image(sf::Image &img)
+static void	fill_image(sf::Image &img, t_raytracer *rt)
 {
   unsigned int	color;
 
   for (unsigned int i = 0 ; i < img.getSize().x ; ++i)
     for (unsigned int j = 0 ; j < img.getSize().y ; ++j)
       {
-	color = rt_getpixel(i, j);
+	color = rt_getpixel(rt, i, j);
 	img.setPixel(i, j, sf::Color((color & 0xFF0000) >> 16,
 				     (color & 0xFF00) >> 8,
 				     (color & 0xFF)));
       }
 }
 
-int		main()
+int		main(int argc, char **argv)
 {
   /* Create and fill image */
   sf::RenderWindow	win;
+  t_raytracer		*rt;
   sf::Image		img;
+
+  if (argc != 2)
+    {
+      fprintf(stderr, "Usage : %s scene_file\n", *argv);
+      return (1);
+    }
+
+  /* Initialize the raytracer structure */
+  rt = rt_new();
+  if (!rt)
+    {
+      perror("rt_new");
+      return (1);
+    }
+  if (rt_parse_file(rt, argv[1]))
+    {
+      rt_delete(rt);
+      return (1);
+    }
 
   win.create(sf::VideoMode(640, 480), "Raytracer");
   img.create(640, 480);
-  fill_image(img);
+  fill_image(img, rt);
 
   /* Create texture and sprite*/
   sf::Texture		tx;
@@ -61,6 +82,9 @@ int		main()
       win.draw(sprite);
       win.display();
     }
+
+  /* Deallocate resources */
+  rt_delete(rt);
 
   return (0);
 }

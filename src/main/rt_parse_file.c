@@ -14,15 +14,61 @@
 #include "raytracer_int.h"
 
 /*
+** Fetches the next token, and prints and error message if it is null
+*/
+#define CHECK_TOKEN(a, b, ...)	a = strtok(NULL, " \n\t"); \
+  if (!a) { fprintf(stderr, b, __VA_ARGS__); return (1); }
+
+/*
+** Parses sphere-specific arguments
+*/
+static int	parse_sphere(t_object *object, unsigned int lineno)
+{
+  t_sphere	*sphere;
+  char		*token;
+
+  sphere = (t_sphere *)(object);
+  CHECK_TOKEN(token, "%u: missing sphere-radius\n", lineno);
+  sphere->radius = atof(token);
+  return (0);
+}
+
+/*
+** Parses the base of an object (pos, rotation, ...)
+*/
+static int	parse_object(t_object *object,
+			     int (*fct)(t_object *, unsigned int),
+			     unsigned int lineno)
+{
+  char		*token;
+
+  CHECK_TOKEN(token, "%u: missing pos-x\n", lineno);
+  object->pos.x = atof(token);
+  CHECK_TOKEN(token, "%u: missing pos-y\n", lineno);
+  object->pos.y = atof(token);
+  CHECK_TOKEN(token, "%u: missing pos-z\n", lineno);
+  object->pos.z = atof(token);
+  CHECK_TOKEN(token, "%u: missing alpha angle\n", lineno);
+  object->rotat.alpha = atof(token);
+  CHECK_TOKEN(token, "%u: missing beta angle\n", lineno);
+  object->rotat.beta = atof(token);
+  CHECK_TOKEN(token, "%u: missing gamma angle\n", lineno);
+  object->rotat.gamma = atof(token);
+  return (fct(object, lineno));
+}
+
+/*
 ** Returns a zero-initialized object from its name
 */
 static t_object	*get_object(const char *name, unsigned int lineno)
 {
-  /* Contains all object names and their sizes */
-  static const struct { const char *name; size_t size; } matches[] =
+  /* Contains all object names, their sizes and a parsing function that will
+   * fill the object's specific fields */
+  static const struct { const char *name; size_t size;
+			int (*fct)(t_object *, unsigned int); } matches[] =
   {
-    { "sphere", sizeof(t_sphere) },
-    { NULL, 0 }
+    { "sphere", sizeof(t_sphere), &parse_sphere },
+    { NULL, 0, NULL }
   };
   unsigned int	i;
   t_object	*obj;
@@ -33,7 +79,11 @@ static t_object	*get_object(const char *name, unsigned int lineno)
       {
 	obj = malloc(matches[i].size);
 	if (obj)
-	  memset(obj, 0, matches[i].size);
+	  {
+	    memset(obj, 0, matches[i].size);
+	    if (parse_object(obj, matches[i].fct, lineno))
+	      return (NULL);
+	  }
 	else
 	  perror("malloc");
 	return (obj);
@@ -51,7 +101,7 @@ static int	parse_line(t_raytracer *rt, char *line, unsigned int lineno)
   char		*token;
 
   /* Check first token, should be the name of the object */
-  token = strtok(line, " ");
+  token = strtok(line, " \n\t");
   if (!token || token[0] == '#')
     return (0);
   obj = get_object(token, lineno);
@@ -63,7 +113,6 @@ static int	parse_line(t_raytracer *rt, char *line, unsigned int lineno)
       perror("objlist_push_back");
       return (1);
     }
-  /* Here should be the arguments (position, rotation...) */
   return (0);
 }
 
@@ -81,7 +130,10 @@ int		rt_parse_file(t_raytracer *rt, const char *filename)
 
   file = fopen(filename, "r");
   if (!file)
-    return (1);
+    {
+      perror("fopen");
+      return (1);
+    }
   size = 0;
   line = NULL;
   lineno = 1;
