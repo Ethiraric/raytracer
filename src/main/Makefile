@@ -19,12 +19,13 @@ SRC		=	rt_getpixel.c
 SRC		+=	objlist.c
 SRC		+=	rt_parse_file.c
 SRC		+=	rt.c
+SRC		+=	rotations.c
 
 OBJ		=	$(SRC:.c=.o) $(SRCXX:.cpp=.o)
 
 CFLAGS		=	-W -Wall -Wshadow -D_GNU_SOURCE -I../../include -fno-diagnostics-show-caret -fms-extensions
 CXXFLAGS	=	-W -Wall -Wshadow -D_GNU_SOURCE -I../../include -fno-diagnostics-show-caret -fms-extensions
-LDFLAGS		=	-lsfml-window -lsfml-graphics -lsfml-system
+LDFLAGS		=	-lsfml-window -lsfml-graphics -lsfml-system -lm
 
 %.o:	%.c
 	$(CC) -c $(CFLAGS)            -o $@ $^

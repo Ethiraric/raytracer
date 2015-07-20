@@ -36,4 +36,6 @@ typedef struct	s_rotat
   t_angle	gamma;
 }		t_rotat;
 
+typedef double t_matrix[3][3];
+
 #endif /* !RTTYPES_H */

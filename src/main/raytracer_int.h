@@ -13,6 +13,7 @@
 
 # include <sys/types.h>
 # include "objects.h"
+# include "rttypes.h"
 
 typedef struct s_objlist t_objlist;
 
@@ -21,6 +22,17 @@ void		objlist_delete(t_objlist *objlist);
 int		objlist_push_back(t_objlist *objlist, t_object *obj);
 t_object	*objlist_at(t_objlist *objlist, unsigned int idx);
 size_t		objlist_size(t_objlist *objlist);
+
+/*
+** Matrix
+*/
+void		matrix_rotate_x(t_matrix *m, double alpha);
+void		matrix_rotate_y(t_matrix *m, double alpha);
+void		matrix_rotate_z(t_matrix *m, double alpha);
+void		matrix_set_angles(t_matrix *tab, double alpha,
+				  double beta, double gamma);
+void		matrix_set_inv_angles(t_matrix *tab, double alpha,
+				      double beta, double gamma);
 
 typedef struct	s_render
 {
