@@ -15,6 +15,18 @@
 # include "objects.h"
 # include "rttypes.h"
 
+/*
+** Math-related utilities
+*/
+# define SQR(a)		((a) * (a))
+/* The delta from a quadratic equation */
+# define EQ2DELTA	SQR(b) - 4 * a * c
+
+inline t_dist	quadratic_dist(t_eqtype a, t_eqtype b, t_eqtype delta);
+
+/*
+** Objlist interface
+*/
 typedef struct s_objlist t_objlist;
 
 t_objlist	*objlist_new();
@@ -33,6 +45,7 @@ void		matrix_set_angles(t_matrix *tab, double alpha,
 				  double beta, double gamma);
 void		matrix_set_inv_angles(t_matrix *tab, double alpha,
 				      double beta, double gamma);
+void		matrix_apply(t_matrix *matrix, t_pos *pos);
 
 typedef struct	s_render
 {
@@ -44,6 +57,8 @@ typedef struct	s_eye
 {
   t_pos		pos;	// Position of the eye
   t_rotat	rotat;	// Rotation of the eye
+  t_matrix	matrix;	// Rotation matrix of the eye
+  t_matrix	matrix_inv; // Inverted rotation matrix of the eye
   t_dist	d;	// Distance to the plan
   t_dist	pw;	// Plan width
   t_dist	ph;	// Plan height
@@ -55,5 +70,16 @@ typedef struct	s_raytracer
   t_render	render;
   t_objlist	*objlist;
 }		t_raytracer;
+
+/*
+** Datas necessary to the calculation of intersections
+*/
+typedef struct	s_calcdat
+{
+  t_pos		eyepos;	// Position of the eye
+  t_vec		eyevec;	// Vector of the ray we launch
+  t_dist	objdist; // Distance of the nearest object
+  t_object	*obj;	// Nearest object
+}		t_calcdat;
 
 #endif /* !RAYTRACER_INT_H_ */

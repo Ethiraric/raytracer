@@ -20,6 +20,29 @@
   if (!a) { fprintf(stderr, b, __VA_ARGS__); return (1); }
 
 /*
+** char * -> t_color conversion
+** Basically it's hexadecimal string to t_color
+*/
+static t_color	get_color(char *token)
+{
+  t_color	res;
+
+  res = 0;
+  while (*token)
+    {
+      res <<= 4;
+      if (*token <= 'F' && *token > 'A')
+	res += (t_color)(*token - 'A') + 10;
+      else if (*token <= '9' && *token >= '0')
+	res += (t_color)(*token - '0');
+      else
+	return (res);
+      ++token;
+    }
+  return (res);
+}
+
+/*
 ** Parses sphere-specific arguments
 */
 static int	parse_sphere(t_object *object, unsigned int lineno)
@@ -30,6 +53,7 @@ static int	parse_sphere(t_object *object, unsigned int lineno)
   sphere = (t_sphere *)(object);
   CHECK_TOKEN(token, "%u: missing sphere-radius\n", lineno);
   sphere->radius = atof(token);
+  sphere->collision = &sphere_collision;
   return (0);
 }
 
@@ -54,6 +78,8 @@ static int	parse_object(t_object *object,
   object->rotat.beta = atof(token);
   CHECK_TOKEN(token, "%u: missing gamma angle\n", lineno);
   object->rotat.gamma = atof(token);
+  CHECK_TOKEN(token, "%u: missing color\n", lineno);
+  object->color = get_color(token);
   return (fct(object, lineno));
 }
 

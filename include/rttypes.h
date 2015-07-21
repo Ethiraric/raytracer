@@ -11,10 +11,13 @@
 #ifndef RTTYPES_H
 # define RTTYPES_H
 
-typedef float t_coor;
-typedef float t_angle;
-typedef t_coor t_radius;
-typedef t_coor t_dist;
+typedef float t_coor;	// Coordinate type
+typedef float t_angle;	// Angle type
+typedef t_coor t_radius; // Radius type
+typedef t_coor t_dist;	// Distance type
+typedef float t_ratio;	// Ratio type
+typedef float t_eqtype;	// Equation variable type
+typedef unsigned int t_color; // Color type
 
 typedef struct	s_pos
 {
@@ -22,6 +25,16 @@ typedef struct	s_pos
   t_coor	y;
   t_coor	z;
 }		t_pos;
+
+#define POS_SUBEQ(a, b)	a.x -= b.x; a.y -= b.y; a.z -= b.z;
+
+typedef t_pos t_vec;
+
+typedef struct	s_ray
+{
+  t_pos		pos;
+  t_vec		vec;
+}		t_ray;
 
 /*
 ** Rotations :

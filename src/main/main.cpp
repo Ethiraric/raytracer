@@ -16,6 +16,7 @@ static void	fill_image(sf::Image &img, t_raytracer *rt)
 {
   unsigned int	color;
 
+  color = 0;
   for (unsigned int i = 0 ; i < img.getSize().x ; ++i)
     for (unsigned int j = 0 ; j < img.getSize().y ; ++j)
       {
@@ -24,6 +25,7 @@ static void	fill_image(sf::Image &img, t_raytracer *rt)
 				     (color & 0xFF00) >> 8,
 				     (color & 0xFF)));
       }
+  rt_getpixel(rt, 320, 240);
 }
 
 int		main(int argc, char **argv)
@@ -46,7 +48,7 @@ int		main(int argc, char **argv)
       perror("rt_new");
       return (1);
     }
-  if (rt_parse_file(rt, argv[1]))
+  if (rt_parse_file(rt, argv[1]) || rt_init(rt))
     {
       rt_delete(rt);
       return (1);

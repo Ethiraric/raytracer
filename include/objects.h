@@ -13,10 +13,16 @@
 
 # include "rttypes.h"
 
+typedef struct s_calcdat t_calcdat;
+
 typedef struct	s_object
 {
   t_rotat	rotat;
   t_pos		pos;
+  t_matrix	matrix;
+  t_matrix	matrix_inv;
+  t_color	color;
+  t_dist	(*collision)(struct s_object *, t_ray *);
 }		t_object;
 
 typedef struct	s_sphere
@@ -24,5 +30,7 @@ typedef struct	s_sphere
   t_object;
   t_radius	radius;
 }		t_sphere;
+
+t_dist		sphere_collision(t_object *obj, t_ray *ray);
 
 #endif /* !OBJECTS_H_ */

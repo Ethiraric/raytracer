@@ -22,6 +22,7 @@ t_raytracer	*rt_new();
 void		rt_delete(t_raytracer *rt);
 unsigned int	rt_getpixel(t_raytracer *rt, unsigned int x, unsigned int y);
 int		rt_parse_file(t_raytracer *rt, const char *filename);
+int		rt_init(t_raytracer *rt);
 
 # ifdef __cplusplus
 }
