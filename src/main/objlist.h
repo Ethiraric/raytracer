@@ -13,6 +13,7 @@
 
 # include <sys/types.h>
 # include "objects.h"
+# include "light.h"
 
 typedef struct	s_objlist
 {
@@ -20,6 +21,13 @@ typedef struct	s_objlist
   size_t	size;
   size_t	allocd;
 }		t_objlist;
+
+typedef struct	s_lightlist
+{
+  t_light	**lights;
+  size_t	size;
+  size_t	allocd;
+}		t_lightlist;
 
 # include "raytracer_int.h"
 

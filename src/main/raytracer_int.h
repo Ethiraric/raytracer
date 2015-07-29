@@ -14,6 +14,7 @@
 # include <sys/types.h>
 # include "objects.h"
 # include "rttypes.h"
+# include "light.h"
 
 /*
 ** Math-related utilities
@@ -34,6 +35,17 @@ void		objlist_delete(t_objlist *objlist);
 int		objlist_push_back(t_objlist *objlist, t_object *obj);
 t_object	*objlist_at(t_objlist *objlist, unsigned int idx);
 size_t		objlist_size(t_objlist *objlist);
+
+/*
+** Lightlist interface
+*/
+typedef struct s_lightlist t_lightlist;
+
+t_lightlist	*lightlist_new();
+void		lightlist_delete(t_lightlist *lightlist);
+int		lightlist_push_back(t_lightlist *lightlist, t_light *light);
+t_light		*lightlist_at(t_lightlist *lightlist, unsigned int idx);
+size_t		lightlist_size(t_lightlist *lightlist);
 
 /*
 ** Matrix
@@ -69,6 +81,7 @@ typedef struct	s_raytracer
   t_eye		eye;
   t_render	render;
   t_objlist	*objlist;
+  t_lightlist	*lightlist;
 }		t_raytracer;
 
 /*
@@ -79,7 +92,16 @@ typedef struct	s_calcdat
   t_pos		eyepos;	// Position of the eye
   t_vec		eyevec;	// Vector of the ray we launch
   t_dist	objdist; // Distance of the nearest object
+  t_ray		objray;	// The ray after rotation / translation
   t_object	*obj;	// Nearest object
+  t_color	pixelcolor; // Color of the pixel
 }		t_calcdat;
+
+/*
+** Main raytracer hidden functions
+*/
+void		apply_lights(t_lightlist *lightlist, t_calcdat *dat);
+
+# include "raytracer.h"
 
 #endif /* !RAYTRACER_INT_H_ */

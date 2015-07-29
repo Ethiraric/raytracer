@@ -86,3 +86,78 @@ size_t		objlist_size(t_objlist *objlist)
 {
   return (objlist->size);
 }
+
+/*
+** Reallocate the lights field so it can contain at least size elements
+*/
+static int	lightlist_realloc(t_lightlist *lightlist, size_t size)
+{
+  t_light	**tmp;
+
+  tmp = realloc(lightlist->lights, size * sizeof(t_light *));
+  if (!tmp)
+    return (1);
+  lightlist->lights = tmp;
+  lightlist->allocd = size;
+  return (0);
+}
+
+/*
+** Create a new lightlist
+*/
+t_lightlist	*lightlist_new()
+{
+  t_lightlist	*ret;
+
+  ret = malloc(sizeof(t_lightlist));
+  if (ret)
+    memset(ret, 0, sizeof(t_lightlist));
+  return (ret);
+}
+
+/*
+** Delete a previously newed lightlist
+** Objects contained in the lightlist will be freed
+*/
+void		lightlist_delete(t_lightlist *lightlist)
+{
+  unsigned int	i;
+
+  if (lightlist->lights)
+    {
+      for (i = 0 ; i < lightlist->size ; ++i)
+	free(lightlist->lights[i]);
+      free(lightlist->lights);
+    }
+  free(lightlist);
+}
+
+/*
+** Add a previously mallocd object to the lightlist
+*/
+int		lightlist_push_back(t_lightlist *lightlist, t_light *light)
+{
+  if (lightlist->size >= lightlist->allocd)
+    if (lightlist_realloc(lightlist, lightlist->size + 10))
+      return (1);
+  lightlist->lights[lightlist->size] = light;
+  ++lightlist->size;
+  return (0);
+}
+
+/*
+** Returns the idx-th element in the lightlist
+** Does not check if idx is out-of-range
+*/
+t_light	*lightlist_at(t_lightlist *lightlist, unsigned int idx)
+{
+  return (lightlist->lights[idx]);
+}
+
+/*
+** Returns the number of lights contained in the lightlist
+*/
+size_t		lightlist_size(t_lightlist *lightlist)
+{
+  return (lightlist->size);
+}

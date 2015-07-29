@@ -29,3 +29,12 @@ t_dist		sphere_collision(t_object *obj, t_ray *ray)
       SQR(sphere->radius);
   return (quadratic_dist(a, b, EQ2DELTA));
 }
+
+/*
+** Fills norm with the normal vector at given intersection
+*/
+void		sphere_norm(t_object *obj, t_pos *ipos, t_vec *norm)
+{
+  (void)(obj);
+  *norm = *ipos;
+}

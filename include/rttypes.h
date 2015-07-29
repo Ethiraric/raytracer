@@ -11,13 +11,25 @@
 #ifndef RTTYPES_H
 # define RTTYPES_H
 
-typedef float t_coor;	// Coordinate type
-typedef float t_angle;	// Angle type
-typedef t_coor t_radius; // Radius type
-typedef t_coor t_dist;	// Distance type
-typedef float t_ratio;	// Ratio type
-typedef float t_eqtype;	// Equation variable type
-typedef unsigned int t_color; // Color type
+typedef float t_coor;			// Coordinate type
+typedef float t_angle;			// Angle type
+typedef t_coor t_radius;		// Radius type
+typedef t_coor t_dist;			// Distance type
+typedef float t_ratio;			// Ratio type
+typedef float t_eqtype;			// Equation variable type
+typedef unsigned int t_color;		// Color type
+typedef float t_intens;			// Light intensity type
+typedef unsigned int t_colorcalc;	// Color calculations type
+typedef unsigned char t_subcolor;	// R, G or B type
+
+# define SUBCOLOR_MAX	(t_subcolor)(255)
+
+typedef struct	s_rgbcolor
+{
+  t_subcolor	r;
+  t_subcolor	g;
+  t_subcolor	b;
+}		t_rgbcolor;
 
 typedef struct	s_pos
 {
@@ -26,7 +38,10 @@ typedef struct	s_pos
   t_coor	z;
 }		t_pos;
 
-#define POS_SUBEQ(a, b)	a.x -= b.x; a.y -= b.y; a.z -= b.z;
+/*
+** Does a -= b; for t_pos type
+*/
+# define POS_SUBEQ(a, b)	a.x -= b.x; a.y -= b.y; a.z -= b.z;
 
 typedef t_pos t_vec;
 

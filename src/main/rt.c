@@ -26,7 +26,13 @@ t_raytracer	*rt_new()
       ret->objlist = objlist_new();
       if (!ret->objlist)
 	{
-	  free(ret);
+	  rt_delete(ret);
+	  return (NULL);
+	}
+      ret->lightlist = lightlist_new();
+      if (!ret->lightlist)
+	{
+	  rt_delete(ret);
 	  return (NULL);
 	}
     }
@@ -38,6 +44,9 @@ t_raytracer	*rt_new()
 */
 void		rt_delete(t_raytracer *rt)
 {
-  objlist_delete(rt->objlist);
+  if (rt->objlist)
+    objlist_delete(rt->objlist);
+  if (rt->lightlist)
+    lightlist_delete(rt->lightlist);
   free(rt);
 }

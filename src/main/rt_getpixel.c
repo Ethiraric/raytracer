@@ -27,8 +27,8 @@ static void	set_eye(t_calcdat *dat, t_raytracer *rt, unsigned int x,
    * We compute the ratio between the coordinate and the width/height, and
    * substract 0.5 because the center of the plan is the center of the
    * screen
-   * Note that since the screen coordinates' Y axis goes down, we must invert
-   * the ratio
+   * Note that since the screen coordinates' Y axis goes down, we must multiply
+   * the ratio by -1
    * We then apply rotation to the vector */
   ratiox = (t_ratio)(x) / (t_ratio)(rt->render.imgw) - (t_ratio)0.5;
   ratioy = -((t_ratio)(y) / (t_ratio)(rt->render.imgh) - (t_ratio)0.5);
@@ -42,8 +42,9 @@ static void	set_eye(t_calcdat *dat, t_raytracer *rt, unsigned int x,
 /*
 ** Sets the ray correctly to be thrown to the object
 */
-static t_dist	do_collision(t_calcdat *dat, t_object *obj)
+static void	do_collision(t_calcdat *dat, t_object *obj)
 {
+  t_dist	dist;
   t_ray		ray;
 
   /* Make the object the new origin */
@@ -54,7 +55,14 @@ static t_dist	do_collision(t_calcdat *dat, t_object *obj)
   matrix_apply(&obj->matrix_inv, &ray.pos);
   ray.vec = dat->eyevec;
   matrix_apply(&obj->matrix_inv, &ray.vec);
-  return (obj->collision(obj, &ray));
+  dist = obj->collision(obj, &ray);
+  if ((dist > (t_dist)(0)) &&
+      (!dat->obj || dist < dat->objdist))
+    {
+      dat->obj = obj;
+      dat->objdist = dist;
+      dat->objray = ray;
+    }
 }
 
 /*
@@ -65,20 +73,13 @@ static void	get_collision(t_calcdat *dat, t_raytracer *rt)
   unsigned int	max;
   unsigned int	i;
   t_object	*obj;
-  t_dist	dist;
 
   max = objlist_size(rt->objlist);
   dat->objdist = -1;
   for (i = 0 ; i < max ; ++i)
     {
       obj = objlist_at(rt->objlist, i);
-      dist = do_collision(dat, obj);
-      if ((dist > (t_dist)(0)) &&
-	  (!dat->obj || dist < dat->objdist))
-	{
-	  dat->obj = obj;
-	  dat->objdist = dist;
-	}
+      do_collision(dat, obj);
     }
 }
 
@@ -92,7 +93,10 @@ unsigned int	rt_getpixel(t_raytracer *rt, unsigned int x, unsigned int y)
   memset(&dat, 0, sizeof(t_calcdat));
   set_eye(&dat, rt, x, y);
   get_collision(&dat, rt);
-  if (dat.obj)
-    return (dat.obj->color);
+  if (dat.obj && lightlist_size(rt->lightlist))
+    {
+      apply_lights(rt->lightlist, &dat);
+      return (dat.pixelcolor);
+    }
   return (0);
 }

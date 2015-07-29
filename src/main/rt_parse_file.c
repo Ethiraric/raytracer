@@ -20,6 +20,12 @@
   if (!a) { fprintf(stderr, b, __VA_ARGS__); return (1); }
 
 /*
+** Special one for light, need to free the light
+*/
+#define CHECK_TOKEN_LIGHT(a, b, ...)	a = strtok(NULL, " \n\t"); \
+  if (!a) { fprintf(stderr, b, __VA_ARGS__); free(light); return (1); }
+
+/*
 ** char * -> t_color conversion
 ** Basically it's hexadecimal string to t_color
 */
@@ -54,6 +60,7 @@ static int	parse_sphere(t_object *object, unsigned int lineno)
   CHECK_TOKEN(token, "%u: missing sphere-radius\n", lineno);
   sphere->radius = atof(token);
   sphere->collision = &sphere_collision;
+  sphere->normal = &sphere_norm;
   return (0);
 }
 
@@ -125,6 +132,41 @@ static int	parse_render(t_raytracer *rt, unsigned int lineno)
   return (0);
 }
 
+static int	parse_light(t_raytracer *rt, unsigned int lineno)
+{
+  t_light	*light;
+  char		*token;
+
+  light = malloc(sizeof(t_light));
+  if (!light)
+    {
+      perror("malloc");
+      return (1);
+    }
+  CHECK_TOKEN_LIGHT(token, "%u: missing light pos-x\n", lineno);
+  light->pos.x = (t_coor)(atoi(token));
+  CHECK_TOKEN_LIGHT(token, "%u: missing light pos-y\n", lineno);
+  light->pos.y = (t_coor)(atoi(token));
+  CHECK_TOKEN_LIGHT(token, "%u: missing light pos-z\n", lineno);
+  light->pos.z = (t_coor)(atoi(token));
+  CHECK_TOKEN_LIGHT(token, "%u: missing light intensity\n", lineno);
+  light->intensity = (t_intens)(atof(token));
+  if (light->intensity > (t_intens)(1) || light->intensity < (t_intens)(0))
+    {
+      fprintf(stderr, "%u: Invalid light intensity\n", lineno);
+      return (1);
+    }
+  CHECK_TOKEN_LIGHT(token, "%u: missing color\n", lineno);
+  light->color = get_color(token);
+  if (lightlist_push_back(rt->lightlist, light))
+    {
+      free(light);
+      perror("lightlist_push_back");
+      return (1);
+    }
+  return (0);
+}
+
 /*
 ** Returns a zero-initialized object from its name
 */
@@ -150,7 +192,10 @@ static t_object	*get_object(const char *name, unsigned int lineno)
 	  {
 	    memset(obj, 0, matches[i].size);
 	    if (parse_object(obj, matches[i].fct, lineno))
-	      return (NULL);
+	      {
+		free(obj);
+		return (NULL);
+	      }
 	  }
 	else
 	  perror("malloc");
@@ -176,6 +221,8 @@ static int	parse_line(t_raytracer *rt, char *line, unsigned int lineno)
     return (parse_eye(rt, lineno));
   if (!strcasecmp(token, "render"))
     return (parse_render(rt, lineno));
+  if (!strcasecmp(token, "light"))
+    return (parse_light(rt, lineno));
   obj = get_object(token, lineno);
   if (!obj)
     return (1);

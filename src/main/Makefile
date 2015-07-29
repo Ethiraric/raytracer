@@ -15,7 +15,8 @@ RM		=	@rm -vf
 MAKE		+=	--no-print-directory
 
 SRCXX		=	main.cpp
-SRC		=	objlist.c
+SRC		+=	apply_lights.c
+SRC		+=	objlist.c
 SRC		+=	quadratic.c
 SRC		+=	rotations.c
 SRC		+=	rt.c
