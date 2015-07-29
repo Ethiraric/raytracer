@@ -90,10 +90,12 @@ unsigned int	rt_getpixel(t_raytracer *rt, unsigned int x, unsigned int y)
 {
   t_calcdat	dat;
 
+  if (!lightlist_size(rt->lightlist))
+    return (0);
   memset(&dat, 0, sizeof(t_calcdat));
   set_eye(&dat, rt, x, y);
   get_collision(&dat, rt);
-  if (dat.obj && lightlist_size(rt->lightlist))
+  if (dat.obj)
     {
       apply_lights(rt->lightlist, &dat);
       return (dat.pixelcolor);

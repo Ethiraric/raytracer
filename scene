@@ -1,4 +1,5 @@
 eye	0 0 0 0 0 0 10 1 1
 sphere	0 0 50 0 0 0 FF 1
 render	640 480
-light	0 0 0 1 FFFFFF
+light	50 0 0 1 FFFFFF
+light	-50 0 0 1 FFFFFF

@@ -52,9 +52,18 @@ static void	apply_cos(t_calcdat *dat, t_light *light, t_pos *ipos,
   v1dst = sqrt(SQR(lighttoi.x) + SQR(lighttoi.y) + SQR(lighttoi.z));
   v2dst = sqrt(SQR(normal.x) + SQR(normal.y) + SQR(normal.z));
   cosval = dot / (v1dst * v2dst);
-  rgb->r = light->r * cosval;
-  rgb->g = light->g * cosval;
-  rgb->b = light->b * cosval;
+  if (cosval > 0)
+    {
+      rgb->r = light->r * cosval;
+      rgb->g = light->g * cosval;
+      rgb->b = light->b * cosval;
+    }
+  else
+    {
+      rgb->r = 0;
+      rgb->g = 0;
+      rgb->b = 0;
+    }
 }
 
 /*
